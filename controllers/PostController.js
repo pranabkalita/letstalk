@@ -1,17 +1,12 @@
 const Post = require('./../models/Post')
 
-exports.allPosts = (req, res) => {
-  res.send('All Posts From Controller !')
-}
-
-exports.createPost = async (req, res) => {
+exports.allPosts = async (req, res) => {
   try {
-    const { title, body, slug } = req.body
-    const post = await Post.create({ title, slug, body })
+    const posts = await Post.find({ isPublished: true }).sort('-createdAt')
 
-    res.status(201).json({
+    res.status(200).json({
       status: 'success',
-      post,
+      data: [posts],
     })
   } catch (error) {
     console.warn('Error: ', error)
@@ -23,14 +18,101 @@ exports.createPost = async (req, res) => {
   }
 }
 
-exports.getOnePost = (req, res) => {
-  res.send('Get one Post !')
+exports.createPost = async (req, res) => {
+  try {
+    const { title, body, slug } = req.body
+    const post = await Post.create({ title, slug, body })
+
+    res.status(201).json({
+      status: 'success',
+      data: [post],
+    })
+  } catch (error) {
+    console.warn('Error: ', error)
+
+    res.status(400).json({
+      status: 'fail',
+      message: 'Failed creating post !',
+    })
+  }
 }
 
-exports.updatePost = (req, res) => {
-  res.send('Update one Post !')
+exports.getOnePost = async (req, res) => {
+  try {
+    const post = await Post.findOne({ slug: req.params.slug })
+
+    if (!post || post.length < 1) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'Post not found !',
+      })
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: [post],
+    })
+  } catch (error) {
+    console.warn('Error: ', error)
+
+    res.status(400).json({
+      status: 'fail',
+      message: 'Failed creating post !',
+    })
+  }
 }
 
-exports.deletePost = (req, res) => {
-  res.send('Delete one Post !')
+exports.updatePost = async (req, res) => {
+  try {
+    const post = await Post.findOne({ slug: req.params.slug })
+
+    if (!post || post.length < 1) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'Post not found !',
+      })
+    }
+
+    post.title = req.body.title
+    post.body = req.body.body
+    await post.save({ validateBeforeSave: false })
+
+    res.status(200).json({
+      status: 'success',
+      data: [post],
+    })
+  } catch (error) {
+    console.warn('Error: ', error)
+
+    res.status(400).json({
+      status: 'fail',
+      message: 'Failed creating post !',
+    })
+  }
+}
+
+exports.deletePost = async (req, res) => {
+  try {
+    const post = await Post.findOne({ slug: req.params.slug })
+
+    if (!post || post.length < 1) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'Post not found !',
+      })
+    }
+
+    await post.remove()
+
+    res.status(204).json({
+      status: 'success',
+    })
+  } catch (error) {
+    console.warn('Error: ', error)
+
+    res.status(400).json({
+      status: 'fail',
+      message: 'Failed creating post !',
+    })
+  }
 }
