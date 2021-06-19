@@ -13,7 +13,7 @@ const app = express()
 app.use(express.json({ limit: '10kb' }))
 
 app.use('/', viewRouter)
-app.use('/posts', postRouter)
+app.use('/api/posts', postRouter)
 
 app.listen(3000, () => {
   console.log(`Server running on PORT : 3000`)

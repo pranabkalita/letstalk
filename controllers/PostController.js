@@ -1,3 +1,4 @@
+const validator = require('express-validator')
 const Post = require('./../models/Post')
 
 exports.allPosts = async (req, res) => {
@@ -6,7 +7,9 @@ exports.allPosts = async (req, res) => {
 
     res.status(200).json({
       status: 'success',
-      data: [posts],
+      data: {
+        posts,
+      },
     })
   } catch (error) {
     console.warn('Error: ', error)
@@ -20,12 +23,23 @@ exports.allPosts = async (req, res) => {
 
 exports.createPost = async (req, res) => {
   try {
+    const errors = validator.validationResult(req)
+
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        status: 'fail',
+        data: {
+          errors: errors.array(),
+        },
+      })
+    }
+
     const { title, body, slug } = req.body
     const post = await Post.create({ title, slug, body })
 
     res.status(201).json({
       status: 'success',
-      data: [post],
+      data: { post },
     })
   } catch (error) {
     console.warn('Error: ', error)
@@ -50,7 +64,9 @@ exports.getOnePost = async (req, res) => {
 
     res.status(200).json({
       status: 'success',
-      data: [post],
+      data: {
+        post,
+      },
     })
   } catch (error) {
     console.warn('Error: ', error)
@@ -79,7 +95,9 @@ exports.updatePost = async (req, res) => {
 
     res.status(200).json({
       status: 'success',
-      data: [post],
+      data: {
+        post,
+      },
     })
   } catch (error) {
     console.warn('Error: ', error)
