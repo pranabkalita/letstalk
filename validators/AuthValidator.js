@@ -14,3 +14,8 @@ exports.register = [
       }
     }),
 ]
+
+exports.login = [
+  validator.check('email', 'Please enter your email.').isEmail(),
+  validator.check('password', 'Please enter you password.').notEmpty(),
+]
