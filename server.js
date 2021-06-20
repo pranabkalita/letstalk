@@ -1,5 +1,8 @@
 // Global Imports
 const express = require('express')
+const dotenv = require('dotenv')
+
+dotenv.config({ path: './.env' })
 
 // Project project imports
 const database = require('./config/database')
@@ -17,6 +20,7 @@ app.use('/', viewRouter)
 app.use('/api/posts', postRouter)
 app.use('/api/auth', authRouter)
 
-app.listen(3000, () => {
-  console.log(`Server running on PORT : 3000`)
+const PORT = process.env.SERVER_PORT
+app.listen(PORT, () => {
+  console.log(`Server running on PORT : ${PORT}`)
 })
