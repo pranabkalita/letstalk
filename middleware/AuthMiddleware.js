@@ -38,5 +38,6 @@ exports.protect = async (req, res, next) => {
   }
 
   // 4. Grant access below
+  req.user = user
   next()
 }

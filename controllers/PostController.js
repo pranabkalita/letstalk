@@ -35,7 +35,8 @@ exports.createPost = async (req, res) => {
     }
 
     const { title, body, slug } = req.body
-    const post = await Post.create({ title, slug, body })
+    const user = req.user._id
+    const post = await Post.create({ user, title, slug, body })
 
     res.status(201).json({
       status: 'success',
@@ -53,7 +54,7 @@ exports.createPost = async (req, res) => {
 
 exports.getOnePost = async (req, res) => {
   try {
-    const post = await Post.findOne({ slug: req.params.slug })
+    const post = await Post.findOne({ slug: req.params.slug }).populate('user')
 
     if (!post || post.length < 1) {
       return res.status(400).json({
